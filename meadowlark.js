@@ -8,11 +8,22 @@ var handlebars = require('express-handlebars')
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
+// Setup the port
 app.set('port', process.env.PORT || 3000);
 
 // Setup the static directory
 app.use(express.static(__dirname + '/public'));
 
+// Testing middleware
+app.use(function(req, res, next){
+    res.locals.showTests = app.get('env') !== 'production' &&
+        req.query.test === '1';
+    next();
+});
+
+/**
+ * Routes go here..
+ */
 // Home page
 app.get('/', function(req, res){
     res.render('home');
