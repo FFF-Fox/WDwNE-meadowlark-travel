@@ -1,5 +1,5 @@
 var express = require('express');
-
+var fortune = require('./lib/fortune.js');
 var app = express();
 
 // Set handlebars view engine
@@ -19,18 +19,8 @@ app.get('/', function(req, res){
 });
 
 // About page
-var fortunes = [
-    "Conquer your fears or they will conquer you.",
-    "Rivers need springs.",
-    "Do not fear what you don't know.",
-    "You will have a pleasant surprise.",
-    "Whenever possible, keep it simple.",
-];
-
 app.get('/about', function(req, res){
-    var randomFortune = 
-        fortunes[Math.floor(Math.random() * fortunes.length)];
-    res.render('about', { fortune: randomFortune });    
+    res.render('about', { fortune: fortune.getFortune });    
 });
 
 // Custom 404 page
