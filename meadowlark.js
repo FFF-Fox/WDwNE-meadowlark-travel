@@ -29,7 +29,7 @@ app.use(function(req, res){
 // Custom 500 page
 app.use(function(err, req, res, next){
     console.error(err.stack);
-    res.statues(500);
+    res.status(500);
     res.render('500');
 });
 
