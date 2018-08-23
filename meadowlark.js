@@ -3,8 +3,11 @@ var fortune = require('./lib/fortune.js');
 var app = express();
 
 // Set handlebars view engine
+var hbs_sections = require('express-handlebars-sections');
 var handlebars = require('express-handlebars')
         .create({ defaultLayout:'main' });
+
+hbs_sections(handlebars);
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
@@ -20,6 +23,9 @@ app.use(function(req, res, next){
         req.query.test === '1';
     next();
 });
+
+// Body parser
+app.use(require('body-parser').urlencoded({ extended: true }));
 
 /**
  * Routes go here..
@@ -43,6 +49,34 @@ app.get('/tours/hood-river', function(req, res){
 });
 app.get('/tours/request-group-rate', function(req, res){
     res.render('tours/request-group-rate');
+});
+
+// Display the headers
+app.get('/headers', function(req, res){
+    res.set('Content-Type', 'text/plain');
+    var s = '';
+    for (var name in req.headers) s += name + ': ' + req.headers[name] + '\n';
+    res.send(s);
+});
+
+// Newsletter
+app.get('/newsletter', function(req, res){
+    res.render('newsletter', { csrf: 'CSRF token here' });
+});
+app.post('/process', function(req, res){
+    console.log('Form (from querystring): ' + req.query.form);
+    console.log('CSRF (from hidden form field): ' + req.body._csrf);
+    console.log('Name (from visible form field): ' + req.body.name);
+    console.log('Email (from visible form field): ' + req.body.email);
+
+    if (req.xhr || req.accepts('json,html') === 'json'){
+        res.send({ success: true });
+    } else {
+        res.redirect(303, '/thank-you');
+    }
+});
+app.get('/thank-you', function(req, res){
+    res.send('Thank you!');
 });
 
 // Custom 404 page
