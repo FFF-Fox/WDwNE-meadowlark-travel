@@ -102,101 +102,11 @@ Vacation.find(function (err, vacations) {
         maximumGuests: 4,
         available: false,
         packagesSold: 0,
-        notes: 'The tur guide is currently recovering from a skiing accident.'
+        notes: 'The tour guide is currently recovering from a skiing accident.'
     }).save();
 });
-/**
- * Routes go here..
- */
-// Home page
-app.get('/', function (req, res) {
-    res.render('home');
-});
 
-// About page
-app.get('/about', function (req, res) {
-    res.render('about', {
-        fortune: fortune.getFortune(),
-        pageTestScript: '/qa/tests-about.js'
-    });
-});
-
-// Tours page routes
-app.get('/tours/hood-river', function (req, res) {
-    res.render('tours/hood-river');
-});
-app.get('/tours/request-group-rate', function (req, res) {
-    res.render('tours/request-group-rate');
-});
-
-// Display the headers
-app.get('/headers', function (req, res) {
-    res.set('Content-Type', 'text/plain');
-    var s = '';
-    for (var name in req.headers) s += name + ': ' + req.headers[name] + '\n';
-    res.send(s);
-});
-
-// Newsletter
-app.get('/newsletter', function (req, res) {
-    res.render('newsletter', { csrf: 'CSRF token here' });
-});
-app.post('/process', function (req, res) {
-    console.log('Form (from querystring): ' + req.query.form);
-    console.log('CSRF (from hidden form field): ' + req.body._csrf);
-    console.log('Name (from visible form field): ' + req.body.name);
-    console.log('Email (from visible form field): ' + req.body.email);
-
-    if (req.xhr || req.accepts('json,html') === 'json') {
-        res.send({ success: true });
-    } else {
-        res.redirect(303, '/thank-you');
-    }
-});
-app.get('/thank-you', function (req, res) {
-    res.send('Thank you!');
-});
-
-// Cookies for everyone!
-app.get('/cookie', function (req, res) {
-    res.cookie('monster', 'nom nom');
-    res.send('You just got a cookie!');
-});
-app.get('/cookie-del', function (req, res) {
-    res.clearCookie('monster');
-    res.send('Your cookie is cleared!');
-});
-
-// Vacations page.
-app.use('/vacations', function (req, res) {
-    Vacation.find({ available: true }, function (err, vacations) {
-        var context = {
-            vacations: vacations.map(function (vacation) {
-                return {
-                    sku: vacation.sku,
-                    name: vacation.name,
-                    description: vacation.description,
-                    price: vacation.price,
-                    inSeason: vacation.inSeason,
-                }
-            })
-        };
-        res.render('vacations', context);
-    });
-});
-
-// Custom 404 page
-app.use(function (req, res) {
-    res.status(404);
-    res.render('404');
-});
-
-// Custom 500 page
-app.use(function (err, req, res, next) {
-    console.error(err.stack);
-    res.status(500);
-    res.render('500');
-});
+require('./routes.js')(app);
 
 app.listen(app.get('port'), function () {
     console.log("Express started on http://localhost:" +
