@@ -4,4 +4,12 @@
 
 module.exports = {
     cookieSecret: 'Your cookie secret goes here',
+    mongo: {
+        development: {
+            connectionString: 'dev_connection_string'
+        },
+        production: {
+            connectionString: 'prod_connection_string'
+        },
+    },
 };
